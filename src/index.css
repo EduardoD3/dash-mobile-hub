@@ -126,4 +126,42 @@
   .floating-action {
     @apply fixed bottom-6 left-4 right-4 z-50;
   }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Hide Lovable badge */
+  [data-lovable-badge],
+  .lovable-badge,
+  [class*="lovable"] {
+    display: none !important;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .camera-preview {
+    @apply relative overflow-hidden rounded-xl bg-secondary;
+  }
+
+  .camera-overlay {
+    @apply absolute inset-0 flex items-center justify-center bg-background/80;
+  }
 }
