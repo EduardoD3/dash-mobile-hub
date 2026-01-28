@@ -46,6 +46,27 @@ const Index = () => {
     setSelectedDelivery(null);
   };
 
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    if (tab === 'receipt') {
+      // Select first pending delivery for receipt capture
+      const pendingDelivery = mockDeliveries.find(d => d.status !== 'delivered');
+      if (pendingDelivery) {
+        setSelectedDelivery(pendingDelivery);
+        setView('receipt');
+      }
+    } else if (tab === 'occurrences') {
+      const pendingDelivery = mockDeliveries.find(d => d.status !== 'delivered');
+      if (pendingDelivery) {
+        setSelectedDelivery(pendingDelivery);
+        setView('occurrence');
+      }
+    } else if (tab === 'deliveries') {
+      setView('list');
+      setSelectedDelivery(null);
+    }
+  };
+
   // Render different views
   if (view === 'detail' && selectedDelivery) {
     return (
@@ -138,7 +159,7 @@ const Index = () => {
         )}
       </div>
 
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 };
