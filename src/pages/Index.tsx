@@ -1,12 +1,144 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { DriverHeader } from "@/components/driver/DriverHeader";
+import { DeliveryCard } from "@/components/driver/DeliveryCard";
+import { DeliveryDetail } from "@/components/driver/DeliveryDetail";
+import { ReceiptCapture } from "@/components/driver/ReceiptCapture";
+import { OccurrenceForm } from "@/components/driver/OccurrenceForm";
+import { BottomNav } from "@/components/driver/BottomNav";
+import { mockDeliveries } from "@/data/mockDeliveries";
+import { Delivery } from "@/types/delivery";
+import { Package, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
+
+type View = 'list' | 'detail' | 'receipt' | 'occurrence';
+type Tab = 'deliveries' | 'receipt' | 'occurrences' | 'profile';
+
+type FilterType = 'all' | 'pending' | 'in_transit' | 'delivered' | 'issue';
 
 const Index = () => {
+  const [view, setView] = useState<View>('list');
+  const [activeTab, setActiveTab] = useState<Tab>('deliveries');
+  const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null);
+  const [filter, setFilter] = useState<FilterType>('all');
+
+  const completedDeliveries = mockDeliveries.filter(d => d.status === 'delivered').length;
+  
+  const filteredDeliveries = mockDeliveries.filter(d => {
+    if (filter === 'all') return true;
+    return d.status === filter;
+  });
+
+  const handleSelectDelivery = (delivery: Delivery) => {
+    setSelectedDelivery(delivery);
+    setView('detail');
+  };
+
+  const handleBack = () => {
+    if (view === 'receipt' || view === 'occurrence') {
+      setView('detail');
+    } else {
+      setView('list');
+      setSelectedDelivery(null);
+    }
+  };
+
+  const handleComplete = () => {
+    setView('list');
+    setSelectedDelivery(null);
+  };
+
+  // Render different views
+  if (view === 'detail' && selectedDelivery) {
+    return (
+      <DeliveryDetail
+        delivery={selectedDelivery}
+        onBack={handleBack}
+        onRegisterReceipt={() => setView('receipt')}
+        onRegisterOccurrence={() => setView('occurrence')}
+      />
+    );
+  }
+
+  if (view === 'receipt' && selectedDelivery) {
+    return (
+      <ReceiptCapture
+        delivery={selectedDelivery}
+        onBack={handleBack}
+        onComplete={handleComplete}
+      />
+    );
+  }
+
+  if (view === 'occurrence' && selectedDelivery) {
+    return (
+      <OccurrenceForm
+        delivery={selectedDelivery}
+        onBack={handleBack}
+        onComplete={handleComplete}
+      />
+    );
+  }
+
+  const filterButtons: { id: FilterType; label: string; icon: React.ReactNode }[] = [
+    { id: 'all', label: 'Todas', icon: <Package className="w-4 h-4" /> },
+    { id: 'pending', label: 'Pendentes', icon: <Clock className="w-4 h-4" /> },
+    { id: 'in_transit', label: 'Em Trânsito', icon: <Package className="w-4 h-4" /> },
+    { id: 'delivered', label: 'Entregues', icon: <CheckCircle2 className="w-4 h-4" /> },
+    { id: 'issue', label: 'Ocorrências', icon: <AlertTriangle className="w-4 h-4" /> },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background pb-24">
+      <DriverHeader 
+        driverName="Carlos Silva"
+        totalDeliveries={mockDeliveries.length}
+        completedDeliveries={completedDeliveries}
+      />
+
+      {/* Filter Pills */}
+      <div className="px-4 py-3 overflow-x-auto">
+        <div className="flex gap-2 min-w-max">
+          {filterButtons.map((btn) => (
+            <button
+              key={btn.id}
+              onClick={() => setFilter(btn.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                filter === btn.id
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-muted-foreground'
+              }`}
+            >
+              {btn.icon}
+              {btn.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Delivery List */}
+      <div className="px-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-sm text-muted-foreground">
+            {filteredDeliveries.length} entregas
+          </h2>
+        </div>
+
+        {filteredDeliveries.length === 0 ? (
+          <div className="glass-card rounded-xl p-8 text-center">
+            <Package className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground">Nenhuma entrega encontrada</p>
+          </div>
+        ) : (
+          filteredDeliveries.map((delivery) => (
+            <DeliveryCard
+              key={delivery.id}
+              delivery={delivery}
+              onSelect={handleSelectDelivery}
+            />
+          ))
+        )}
+      </div>
+
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 };
