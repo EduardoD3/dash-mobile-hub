@@ -145,27 +145,28 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
   return (
     <div className="min-h-screen bg-background animate-fade-in">
       {/* Header */}
-      <header className="glass-card sticky top-0 z-40 px-4 py-3 safe-area-top">
-        <div className="flex items-center gap-3">
+      <header className="glass-card sticky top-0 z-40 px-4 py-4 safe-area-top">
+        <div className="flex items-center gap-4">
           <button 
             onClick={onBack}
-            className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"
+            aria-label="Voltar"
+            className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center active:bg-secondary/80 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="flex-1">
-            <h1 className="font-semibold">Registrar Canhoto</h1>
-            <p className="text-xs text-muted-foreground">{delivery.nf} - {delivery.client}</p>
+            <h1 className="font-bold text-xl">Registrar Canhoto</h1>
+            <p className="text-sm text-muted-foreground font-medium">{delivery.nf} - {delivery.client}</p>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <div className="p-4 pb-32 space-y-4">
+      <div className="p-4 pb-40 space-y-5">
         {/* Photo Capture */}
-        <div className="glass-card rounded-xl p-4">
-          <h3 className="font-semibold text-sm flex items-center gap-2 mb-4">
-            <Camera className="w-4 h-4 text-primary" />
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-bold text-base flex items-center gap-3 mb-5">
+            <Camera className="w-5 h-5 text-primary" />
             Foto do Canhoto Assinado
           </h3>
           
@@ -187,41 +188,42 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
                 muted
                 className="w-full aspect-[4/3] object-cover rounded-xl bg-secondary"
               />
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4">
+              <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-6">
                 <Button
                   onClick={stopCamera}
                   variant="secondary"
-                  size="icon"
-                  className="w-14 h-14 rounded-full"
+                  aria-label="Cancelar"
+                  className="w-16 h-16 rounded-full"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-7 h-7" />
                 </Button>
                 <Button
                   onClick={capturePhoto}
-                  className="w-16 h-16 rounded-full bg-primary hover:bg-primary/90"
+                  aria-label="Capturar foto"
+                  className="w-20 h-20 rounded-full bg-primary hover:bg-primary/90"
                 >
-                  <ScanLine className="w-8 h-8" />
+                  <ScanLine className="w-10 h-10" />
                 </Button>
               </div>
               <div className="absolute top-4 left-4 right-4">
-                <div className="flex items-center justify-center gap-2 bg-background/80 backdrop-blur rounded-lg px-3 py-2">
-                  <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
-                  <span className="text-xs font-medium">Câmera ativa</span>
+                <div className="flex items-center justify-center gap-3 bg-background/80 backdrop-blur rounded-xl px-4 py-3">
+                  <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
+                  <span className="text-sm font-semibold">Câmera ativa</span>
                 </div>
               </div>
             </div>
           ) : !photo ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <button
                 onClick={handleCapture}
-                className="w-full aspect-[4/3] border-2 border-dashed border-primary/50 rounded-xl flex flex-col items-center justify-center gap-3 bg-primary/5 transition-all active:bg-primary/10 active:scale-[0.99]"
+                className="w-full aspect-[4/3] border-2 border-dashed border-primary/50 rounded-2xl flex flex-col items-center justify-center gap-4 bg-primary/5 transition-all active:bg-primary/10 active:scale-[0.99]"
               >
-                <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Camera className="w-10 h-10 text-primary" />
+                <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Camera className="w-12 h-12 text-primary" />
                 </div>
-                <div className="text-center">
-                  <p className="font-semibold text-base">Abrir Câmera</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                <div className="text-center px-4">
+                  <p className="font-bold text-lg">Abrir Câmera</p>
+                  <p className="text-sm text-muted-foreground mt-2">
                     {cameraPermission === 'denied' 
                       ? 'Permissão negada - verifique as configurações' 
                       : 'Toque para capturar o canhoto assinado'}
@@ -229,21 +231,21 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
                 </div>
               </button>
               
-              <div className="relative">
+              <div className="relative py-2">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-border" />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">ou</span>
+                <div className="relative flex justify-center text-sm uppercase">
+                  <span className="bg-card px-3 text-muted-foreground font-medium">ou</span>
                 </div>
               </div>
               
               <Button
                 onClick={handleFileSelect}
                 variant="outline"
-                className="w-full h-14 gap-2"
+                className="w-full h-16 gap-3 text-base font-semibold"
               >
-                <ImagePlus className="w-5 h-5" />
+                <ImagePlus className="w-6 h-6" />
                 Selecionar da Galeria
               </Button>
             </div>
@@ -252,20 +254,21 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
               <img 
                 src={photo} 
                 alt="Canhoto capturado" 
-                className="w-full aspect-[4/3] object-cover rounded-xl border-2 border-primary/30"
+                className="w-full aspect-[4/3] object-cover rounded-2xl border-2 border-primary/30"
               />
-              <div className="absolute top-2 right-2 flex gap-2">
+              <div className="absolute top-3 right-3 flex gap-2">
                 <button
                   onClick={handleRemovePhoto}
-                  className="w-10 h-10 rounded-full bg-destructive flex items-center justify-center shadow-lg"
+                  aria-label="Remover foto"
+                  className="w-14 h-14 rounded-full bg-destructive flex items-center justify-center shadow-lg active:scale-95 transition-transform"
                 >
-                  <X className="w-5 h-5 text-destructive-foreground" />
+                  <X className="w-6 h-6 text-destructive-foreground" />
                 </button>
               </div>
-              <div className="absolute bottom-2 left-2">
-                <div className="flex items-center gap-1 bg-primary/90 backdrop-blur rounded-lg px-2 py-1">
-                  <Check className="w-3 h-3 text-primary-foreground" />
-                  <span className="text-xs font-medium text-primary-foreground">Capturado</span>
+              <div className="absolute bottom-3 left-3">
+                <div className="flex items-center gap-2 bg-primary/90 backdrop-blur rounded-xl px-4 py-2">
+                  <Check className="w-5 h-5 text-primary-foreground" />
+                  <span className="text-sm font-semibold text-primary-foreground">Capturado</span>
                 </div>
               </div>
             </div>
@@ -273,42 +276,42 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
         </div>
 
         {/* Receiver Info */}
-        <div className="glass-card rounded-xl p-4 space-y-4">
-          <h3 className="font-semibold text-sm flex items-center gap-2">
-            <User className="w-4 h-4 text-primary" />
+        <div className="glass-card rounded-2xl p-5 space-y-5">
+          <h3 className="font-bold text-base flex items-center gap-3">
+            <User className="w-5 h-5 text-primary" />
             Dados do Recebedor
           </h3>
           
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Nome Completo *
               </label>
               <Input
                 value={receiverName}
                 onChange={(e) => setReceiverName(e.target.value)}
                 placeholder="Nome de quem recebeu a entrega"
-                className="bg-secondary border-0 h-12"
+                className="bg-secondary border-0 h-14 text-base"
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 CPF/RG (opcional)
               </label>
               <Input
                 value={receiverDoc}
                 onChange={(e) => setReceiverDoc(e.target.value)}
                 placeholder="Documento do recebedor"
-                className="bg-secondary border-0 h-12"
+                className="bg-secondary border-0 h-14 text-base"
               />
             </div>
           </div>
         </div>
 
         {/* Notes */}
-        <div className="glass-card rounded-xl p-4 space-y-4">
-          <h3 className="font-semibold text-sm flex items-center gap-2">
-            <FileText className="w-4 h-4 text-primary" />
+        <div className="glass-card rounded-2xl p-5 space-y-5">
+          <h3 className="font-bold text-base flex items-center gap-3">
+            <FileText className="w-5 h-5 text-primary" />
             Observações da Entrega
           </h3>
           
@@ -316,52 +319,52 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Adicione observações sobre a entrega, condições do produto, local de entrega, etc."
-            className="bg-secondary border-0 min-h-[100px] resize-none"
+            className="bg-secondary border-0 min-h-[120px] resize-none text-base"
           />
         </div>
 
         {/* Delivery Summary */}
-        <div className="glass-card rounded-xl p-4">
-          <h3 className="font-semibold text-sm flex items-center gap-2 mb-3">
-            <FileText className="w-4 h-4 text-accent" />
+        <div className="glass-card rounded-2xl p-5">
+          <h3 className="font-bold text-base flex items-center gap-3 mb-4">
+            <FileText className="w-5 h-5 text-accent" />
             Resumo da Entrega
           </h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Nota Fiscal</span>
-              <span className="font-medium">{delivery.nf}</span>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center py-2">
+              <span className="text-muted-foreground text-base">Nota Fiscal</span>
+              <span className="font-semibold text-base">{delivery.nf}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Cliente</span>
-              <span className="font-medium">{delivery.client}</span>
+            <div className="flex justify-between items-center py-2 border-t border-border/50">
+              <span className="text-muted-foreground text-base">Cliente</span>
+              <span className="font-semibold text-base">{delivery.client}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Itens</span>
-              <span className="font-medium">{delivery.items} peças</span>
+            <div className="flex justify-between items-center py-2 border-t border-border/50">
+              <span className="text-muted-foreground text-base">Itens</span>
+              <span className="font-semibold text-base">{delivery.items} peças</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Endereço</span>
-              <span className="font-medium text-right max-w-[180px]">{delivery.address}</span>
+            <div className="flex justify-between items-start py-2 border-t border-border/50">
+              <span className="text-muted-foreground text-base">Endereço</span>
+              <span className="font-semibold text-base text-right max-w-[200px]">{delivery.address}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Floating Action */}
-      <div className="floating-action safe-area-bottom">
+      <div className="floating-action">
         <Button 
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full touch-action-btn bg-primary hover:bg-primary/90"
+          className="w-full touch-action-btn bg-primary hover:bg-primary/90 text-base"
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              <Loader2 className="w-6 h-6 mr-3 animate-spin" />
               Enviando...
             </>
           ) : (
             <>
-              <Check className="w-5 h-5 mr-2" />
+              <Check className="w-6 h-6 mr-3" />
               Confirmar Entrega
             </>
           )}
