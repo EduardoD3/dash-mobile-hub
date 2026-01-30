@@ -100,15 +100,15 @@ const Index = () => {
   }
 
   const filterButtons: { id: FilterType; label: string; icon: React.ReactNode }[] = [
-    { id: 'all', label: 'Todas', icon: <Package className="w-4 h-4" /> },
-    { id: 'pending', label: 'Pendentes', icon: <Clock className="w-4 h-4" /> },
-    { id: 'in_transit', label: 'Em Trânsito', icon: <Package className="w-4 h-4" /> },
-    { id: 'delivered', label: 'Entregues', icon: <CheckCircle2 className="w-4 h-4" /> },
-    { id: 'issue', label: 'Ocorrências', icon: <AlertTriangle className="w-4 h-4" /> },
+    { id: 'all', label: 'Todas', icon: <Package className="w-5 h-5" /> },
+    { id: 'pending', label: 'Pendentes', icon: <Clock className="w-5 h-5" /> },
+    { id: 'in_transit', label: 'Em Trânsito', icon: <Package className="w-5 h-5" /> },
+    { id: 'delivered', label: 'Entregues', icon: <CheckCircle2 className="w-5 h-5" /> },
+    { id: 'issue', label: 'Ocorrências', icon: <AlertTriangle className="w-5 h-5" /> },
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-32">
       <DriverHeader 
         driverName="Carlos Silva"
         totalDeliveries={mockDeliveries.length}
@@ -116,16 +116,17 @@ const Index = () => {
       />
 
       {/* Filter Pills */}
-      <div className="px-4 py-3 overflow-x-auto">
-        <div className="flex gap-2 min-w-max">
+      <div className="px-4 py-4 overflow-x-auto">
+        <div className="flex gap-3 min-w-max">
           {filterButtons.map((btn) => (
             <button
               key={btn.id}
               onClick={() => setFilter(btn.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              aria-pressed={filter === btn.id}
+              className={`flex items-center gap-2 px-5 py-3 rounded-full text-base font-semibold transition-all min-h-[48px] ${
                 filter === btn.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-muted-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                  : 'bg-secondary text-muted-foreground active:bg-secondary/80'
               }`}
             >
               {btn.icon}
@@ -136,17 +137,17 @@ const Index = () => {
       </div>
 
       {/* Delivery List */}
-      <div className="px-4 space-y-3">
+      <div className="px-4 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-sm text-muted-foreground">
+          <h2 className="font-semibold text-base text-muted-foreground">
             {filteredDeliveries.length} entregas
           </h2>
         </div>
 
         {filteredDeliveries.length === 0 ? (
-          <div className="glass-card rounded-xl p-8 text-center">
-            <Package className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">Nenhuma entrega encontrada</p>
+          <div className="glass-card rounded-2xl p-10 text-center">
+            <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <p className="text-lg text-muted-foreground font-medium">Nenhuma entrega encontrada</p>
           </div>
         ) : (
           filteredDeliveries.map((delivery) => (

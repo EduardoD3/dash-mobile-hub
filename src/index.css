@@ -91,6 +91,16 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Improve touch scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -100,7 +110,7 @@
   }
 
   .status-badge {
-    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold;
   }
 
   .status-pending {
@@ -120,11 +130,12 @@
   }
 
   .touch-action-btn {
-    @apply min-h-[56px] text-base font-semibold rounded-xl transition-all active:scale-[0.98];
+    @apply min-h-[60px] text-lg font-semibold rounded-xl transition-all active:scale-[0.98];
   }
 
   .floating-action {
-    @apply fixed bottom-6 left-4 right-4 z-50;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+    @apply fixed bottom-0 left-4 right-4 z-50 pb-6;
   }
 
   .safe-area-top {
@@ -135,11 +146,17 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* Hide Lovable badge */
+  /* Hide Lovable badge - comprehensive */
   [data-lovable-badge],
   .lovable-badge,
-  [class*="lovable"] {
+  [class*="lovable"],
+  #lovable-badge,
+  div[id*="lovable"],
+  a[href*="lovable.dev"] {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   .animate-fade-in {
@@ -163,5 +180,62 @@
 
   .camera-overlay {
     @apply absolute inset-0 flex items-center justify-center bg-background/80;
+  }
+
+  /* Mobile accessibility improvements */
+  .mobile-text-base {
+    @apply text-base md:text-sm;
+  }
+
+  .mobile-text-lg {
+    @apply text-lg md:text-base;
+  }
+
+  .mobile-text-xl {
+    @apply text-xl md:text-lg;
+  }
+
+  .mobile-touch-target {
+    @apply min-h-[48px] min-w-[48px];
+  }
+
+  .mobile-button {
+    @apply min-h-[52px] text-base font-semibold px-6 rounded-xl;
+  }
+
+  .mobile-input {
+    @apply min-h-[52px] text-base px-4 rounded-xl;
+  }
+
+  .mobile-card {
+    @apply p-5 rounded-2xl;
+  }
+
+  /* Focus styles for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .glass-card {
+      @apply bg-card border-2 border-foreground/30;
+    }
+    
+    .status-badge {
+      @apply border-2;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in {
+      animation: none;
+    }
+    
+    * {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
   }
 }
