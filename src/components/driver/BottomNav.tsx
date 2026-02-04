@@ -1,4 +1,5 @@
 import { Package, Camera, AlertTriangle, User } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Tab = 'deliveries' | 'receipt' | 'occurrences' | 'profile';
 
@@ -7,16 +8,18 @@ interface BottomNavProps {
   onTabChange: (tab: Tab) => void;
 }
 
-const tabs = [
-  { id: 'deliveries' as Tab, label: 'Entregas', icon: Package },
-  { id: 'receipt' as Tab, label: 'Canhoto', icon: Camera },
-  { id: 'occurrences' as Tab, label: 'Ocorrências', icon: AlertTriangle },
-  { id: 'profile' as Tab, label: 'Perfil', icon: User },
-];
-
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
+  const { t } = useLanguage();
+  
+  const tabs = [
+    { id: 'deliveries' as Tab, label: t('nav_deliveries'), icon: Package },
+    { id: 'receipt' as Tab, label: t('nav_receipt'), icon: Camera },
+    { id: 'occurrences' as Tab, label: t('nav_occurrences'), icon: AlertTriangle },
+    { id: 'profile' as Tab, label: t('nav_profile'), icon: User },
+  ];
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 glass-card border-t border-border/50 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom, 8px)' }}>
+    <nav className="fixed bottom-0 left-0 right-0 glass-card border-t border-border/50 z-40" style={{ paddingBottom: 'env(safe-area-inset-bottom, 8px)' }}>
       <div className="flex items-center justify-around py-3 px-2">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;

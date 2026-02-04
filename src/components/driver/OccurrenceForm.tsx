@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Delivery, OccurrenceType } from "@/types/delivery";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface OccurrenceFormProps {
   delivery: Delivery;
@@ -11,21 +12,22 @@ interface OccurrenceFormProps {
   onComplete: () => void;
 }
 
-const occurrenceTypes: { value: OccurrenceType; label: string; icon: string }[] = [
-  { value: 'damage', label: 'Avaria no Produto', icon: '💔' },
-  { value: 'refused', label: 'Cliente Recusou', icon: '🚫' },
-  { value: 'partial', label: 'Entrega Parcial', icon: '📦' },
-  { value: 'reschedule', label: 'Reagendamento', icon: '📅' },
-  { value: 'other', label: 'Outro', icon: '📝' },
-];
-
 export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormProps) {
+  const { t } = useLanguage();
   const [selectedType, setSelectedType] = useState<OccurrenceType | null>(null);
   const [description, setDescription] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const occurrenceTypes: { value: OccurrenceType; label: string; icon: string }[] = [
+    { value: 'damage', label: t('damaged_product'), icon: '💔' },
+    { value: 'refused', label: t('refused_receipt'), icon: '🚫' },
+    { value: 'partial', label: t('absent_customer'), icon: '👤' },
+    { value: 'reschedule', label: t('closed_location'), icon: '🏢' },
+    { value: 'other', label: t('other'), icon: '📝' },
+  ];
 
   const handleCapture = () => {
     fileInputRef.current?.click();
@@ -52,8 +54,8 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
   const handleSubmit = async () => {
     if (!selectedType) {
       toast({
-        title: "Selecione o tipo",
-        description: "Escolha o tipo de ocorrência",
+        title: t('occurrence_type'),
+        description: t('select_type'),
         variant: "destructive",
       });
       return;
@@ -61,21 +63,19 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
 
     if (!description.trim()) {
       toast({
-        title: "Descrição obrigatória",
-        description: "Descreva o que aconteceu",
+        title: t('description'),
+        description: t('describe_occurrence'),
         variant: "destructive",
       });
       return;
     }
 
     setIsSubmitting(true);
-    
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     toast({
-      title: "Ocorrência registrada!",
-      description: "O supervisor será notificado",
+      title: t('occurrence_report'),
+      description: t('submit_occurrence'),
     });
     
     setIsSubmitting(false);
@@ -89,13 +89,13 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
         <div className="flex items-center gap-4">
           <button 
             onClick={onBack}
-            aria-label="Voltar"
+            aria-label={t('back')}
             className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center active:bg-secondary/80 transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="flex-1">
-            <h1 className="font-bold text-xl text-warning">Registrar Ocorrência</h1>
+            <h1 className="font-bold text-xl text-warning">{t('occurrence_report')}</h1>
             <p className="text-sm text-muted-foreground font-medium">{delivery.nf} - {delivery.client}</p>
           </div>
         </div>
@@ -104,10 +104,10 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
       {/* Content */}
       <div className="p-4 pb-40 space-y-5">
         {/* Type Selection */}
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-2xl p-5 border-l-4 border-warning">
           <h3 className="font-bold text-base flex items-center gap-3 mb-5">
             <AlertTriangle className="w-5 h-5 text-warning" />
-            Tipo de Ocorrência
+            {t('occurrence_type')}
           </h3>
           
           <div className="grid grid-cols-2 gap-3">
@@ -131,11 +131,11 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
 
         {/* Description */}
         <div className="glass-card rounded-2xl p-5">
-          <h3 className="font-bold text-base mb-4">Descrição</h3>
+          <h3 className="font-bold text-base mb-4">{t('description')}</h3>
           <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Descreva o que aconteceu..."
+            placeholder={t('describe_occurrence')}
             className="bg-secondary border-0 min-h-[120px] resize-none text-base"
           />
         </div>
@@ -144,7 +144,7 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
         <div className="glass-card rounded-2xl p-5">
           <h3 className="font-bold text-base flex items-center gap-3 mb-5">
             <Camera className="w-5 h-5 text-primary" />
-            Fotos (opcional)
+            {t('occurrence_photo')} ({t('optional')})
           </h3>
           
           <input
@@ -161,12 +161,12 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
               <div key={index} className="relative aspect-square">
                 <img 
                   src={photo} 
-                  alt={`Foto ${index + 1}`}
+                  alt={`${t('occurrence_photo')} ${index + 1}`}
                   className="w-full h-full object-cover rounded-xl"
                 />
                 <button
                   onClick={() => handleRemovePhoto(index)}
-                  aria-label={`Remover foto ${index + 1}`}
+                  aria-label={`${t('cancel')} ${index + 1}`}
                   className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-destructive flex items-center justify-center shadow-lg"
                 >
                   <X className="w-4 h-4 text-destructive-foreground" />
@@ -176,11 +176,11 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
             {photos.length < 4 && (
               <button
                 onClick={handleCapture}
-                aria-label="Adicionar foto"
+                aria-label={t('take_photo')}
                 className="aspect-square border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 bg-secondary/50 transition-colors active:bg-secondary min-h-[100px]"
               >
                 <Plus className="w-8 h-8 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground font-medium">Adicionar</span>
+                <span className="text-xs text-muted-foreground font-medium">{t('take_photo')}</span>
               </button>
             )}
           </div>
@@ -197,12 +197,12 @@ export function OccurrenceForm({ delivery, onBack, onComplete }: OccurrenceFormP
           {isSubmitting ? (
             <>
               <Loader2 className="w-6 h-6 mr-3 animate-spin" />
-              Enviando...
+              {t('loading_camera')}
             </>
           ) : (
             <>
               <Send className="w-6 h-6 mr-3" />
-              Enviar Ocorrência
+              {t('submit_occurrence')}
             </>
           )}
         </Button>
