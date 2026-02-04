@@ -7,6 +7,7 @@ import { OccurrenceForm } from "@/components/driver/OccurrenceForm";
 import { BottomNav } from "@/components/driver/BottomNav";
 import { mockDeliveries } from "@/data/mockDeliveries";
 import { Delivery } from "@/types/delivery";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Package, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 
 type View = 'list' | 'detail' | 'receipt' | 'occurrence';
@@ -15,6 +16,7 @@ type Tab = 'deliveries' | 'receipt' | 'occurrences' | 'profile';
 type FilterType = 'all' | 'pending' | 'in_transit' | 'delivered' | 'issue';
 
 const Index = () => {
+  const { t } = useLanguage();
   const [view, setView] = useState<View>('list');
   const [activeTab, setActiveTab] = useState<Tab>('deliveries');
   const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null);
@@ -49,7 +51,6 @@ const Index = () => {
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
     if (tab === 'receipt') {
-      // Select first pending delivery for receipt capture
       const pendingDelivery = mockDeliveries.find(d => d.status !== 'delivered');
       if (pendingDelivery) {
         setSelectedDelivery(pendingDelivery);
@@ -67,7 +68,6 @@ const Index = () => {
     }
   };
 
-  // Render different views
   if (view === 'detail' && selectedDelivery) {
     return (
       <DeliveryDetail
@@ -100,11 +100,11 @@ const Index = () => {
   }
 
   const filterButtons: { id: FilterType; label: string; icon: React.ReactNode }[] = [
-    { id: 'all', label: 'Todas', icon: <Package className="w-5 h-5" /> },
-    { id: 'pending', label: 'Pendentes', icon: <Clock className="w-5 h-5" /> },
-    { id: 'in_transit', label: 'Em Trânsito', icon: <Package className="w-5 h-5" /> },
-    { id: 'delivered', label: 'Entregues', icon: <CheckCircle2 className="w-5 h-5" /> },
-    { id: 'issue', label: 'Ocorrências', icon: <AlertTriangle className="w-5 h-5" /> },
+    { id: 'all', label: t('nav_deliveries'), icon: <Package className="w-5 h-5" /> },
+    { id: 'pending', label: t('status_pending'), icon: <Clock className="w-5 h-5" /> },
+    { id: 'in_transit', label: t('status_transit'), icon: <Package className="w-5 h-5" /> },
+    { id: 'delivered', label: t('status_delivered'), icon: <CheckCircle2 className="w-5 h-5" /> },
+    { id: 'issue', label: t('nav_occurrences'), icon: <AlertTriangle className="w-5 h-5" /> },
   ];
 
   return (
@@ -140,14 +140,14 @@ const Index = () => {
       <div className="px-4 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-base text-muted-foreground">
-            {filteredDeliveries.length} entregas
+            {filteredDeliveries.length} {t('nav_deliveries').toLowerCase()}
           </h2>
         </div>
 
         {filteredDeliveries.length === 0 ? (
           <div className="glass-card rounded-2xl p-10 text-center">
             <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <p className="text-lg text-muted-foreground font-medium">Nenhuma entrega encontrada</p>
+            <p className="text-lg text-muted-foreground font-medium">{t('nav_deliveries')}</p>
           </div>
         ) : (
           filteredDeliveries.map((delivery) => (

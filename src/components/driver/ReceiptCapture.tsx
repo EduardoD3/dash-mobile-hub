@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Delivery } from "@/types/delivery";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ReceiptCaptureProps {
   delivery: Delivery;
@@ -13,6 +14,7 @@ interface ReceiptCaptureProps {
 }
 
 export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureProps) {
+  const { t } = useLanguage();
   const [photo, setPhoto] = useState<string | null>(null);
   const [receiverName, setReceiverName] = useState("");
   const [receiverDoc, setReceiverDoc] = useState("");
@@ -45,12 +47,12 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
       setCameraPermission('denied');
       setIsCapturing(false);
       toast({
-        title: "Permissão negada",
-        description: "Por favor, permita o acesso à câmera nas configurações do dispositivo",
+        title: t('camera_permission'),
+        description: t('camera_permission_desc'),
         variant: "destructive",
       });
     }
-  }, [toast]);
+  }, [toast, t]);
 
   const capturePhoto = useCallback(() => {
     if (videoRef.current && canvasRef.current) {
@@ -112,8 +114,8 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
   const handleSubmit = async () => {
     if (!photo) {
       toast({
-        title: "Foto obrigatória",
-        description: "Tire uma foto do canhoto assinado",
+        title: t('receipt_photo'),
+        description: t('take_photo'),
         variant: "destructive",
       });
       return;
@@ -121,21 +123,19 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
 
     if (!receiverName.trim()) {
       toast({
-        title: "Nome obrigatório",
-        description: "Informe o nome de quem recebeu",
+        title: t('receiver_name'),
+        description: t('receiver_data'),
         variant: "destructive",
       });
       return;
     }
 
     setIsSubmitting(true);
-    
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     toast({
-      title: "Canhoto registrado!",
-      description: `Entrega ${delivery.nf} confirmada com sucesso`,
+      title: t('save_receipt'),
+      description: `${t('nav_deliveries')} ${delivery.nf}`,
     });
     
     setIsSubmitting(false);
@@ -149,13 +149,13 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
         <div className="flex items-center gap-4">
           <button 
             onClick={onBack}
-            aria-label="Voltar"
+            aria-label={t('back')}
             className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center active:bg-secondary/80 transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="flex-1">
-            <h1 className="font-bold text-xl">Registrar Canhoto</h1>
+            <h1 className="font-bold text-xl">{t('receipt_capture')}</h1>
             <p className="text-sm text-muted-foreground font-medium">{delivery.nf} - {delivery.client}</p>
           </div>
         </div>
@@ -164,10 +164,10 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
       {/* Content */}
       <div className="p-4 pb-40 space-y-5">
         {/* Photo Capture */}
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-2xl p-5 border-l-4 border-primary">
           <h3 className="font-bold text-base flex items-center gap-3 mb-5">
             <Camera className="w-5 h-5 text-primary" />
-            Foto do Canhoto Assinado
+            {t('receipt_photo')}
           </h3>
           
           <input
@@ -192,14 +192,14 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
                 <Button
                   onClick={stopCamera}
                   variant="secondary"
-                  aria-label="Cancelar"
+                  aria-label={t('cancel')}
                   className="w-16 h-16 rounded-full"
                 >
                   <X className="w-7 h-7" />
                 </Button>
                 <Button
                   onClick={capturePhoto}
-                  aria-label="Capturar foto"
+                  aria-label={t('capture')}
                   className="w-20 h-20 rounded-full bg-primary hover:bg-primary/90"
                 >
                   <ScanLine className="w-10 h-10" />
@@ -207,8 +207,8 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
               </div>
               <div className="absolute top-4 left-4 right-4">
                 <div className="flex items-center justify-center gap-3 bg-background/80 backdrop-blur rounded-xl px-4 py-3">
-                  <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
-                  <span className="text-sm font-semibold">Câmera ativa</span>
+                  <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
+                  <span className="text-sm font-semibold">{t('camera_ready')}</span>
                 </div>
               </div>
             </div>
@@ -222,11 +222,11 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
                   <Camera className="w-12 h-12 text-primary" />
                 </div>
                 <div className="text-center px-4">
-                  <p className="font-bold text-lg">Abrir Câmera</p>
+                  <p className="font-bold text-lg">{t('take_photo')}</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     {cameraPermission === 'denied' 
-                      ? 'Permissão negada - verifique as configurações' 
-                      : 'Toque para capturar o canhoto assinado'}
+                      ? t('camera_permission') 
+                      : t('camera_permission_desc')}
                   </p>
                 </div>
               </button>
@@ -246,20 +246,20 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
                 className="w-full h-16 gap-3 text-base font-semibold"
               >
                 <ImagePlus className="w-6 h-6" />
-                Selecionar da Galeria
+                {t('select_gallery')}
               </Button>
             </div>
           ) : (
             <div className="relative">
               <img 
                 src={photo} 
-                alt="Canhoto capturado" 
+                alt={t('receipt_photo')} 
                 className="w-full aspect-[4/3] object-cover rounded-2xl border-2 border-primary/30"
               />
               <div className="absolute top-3 right-3 flex gap-2">
                 <button
                   onClick={handleRemovePhoto}
-                  aria-label="Remover foto"
+                  aria-label={t('retake_photo')}
                   className="w-14 h-14 rounded-full bg-destructive flex items-center justify-center shadow-lg active:scale-95 transition-transform"
                 >
                   <X className="w-6 h-6 text-destructive-foreground" />
@@ -268,7 +268,7 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
               <div className="absolute bottom-3 left-3">
                 <div className="flex items-center gap-2 bg-primary/90 backdrop-blur rounded-xl px-4 py-2">
                   <Check className="w-5 h-5 text-primary-foreground" />
-                  <span className="text-sm font-semibold text-primary-foreground">Capturado</span>
+                  <span className="text-sm font-semibold text-primary-foreground">{t('capture')}</span>
                 </div>
               </div>
             </div>
@@ -279,29 +279,29 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
         <div className="glass-card rounded-2xl p-5 space-y-5">
           <h3 className="font-bold text-base flex items-center gap-3">
             <User className="w-5 h-5 text-primary" />
-            Dados do Recebedor
+            {t('receiver_data')}
           </h3>
           
           <div className="space-y-4">
             <div>
               <label className="text-sm text-muted-foreground mb-2 block font-medium">
-                Nome Completo *
+                {t('receiver_name')} *
               </label>
               <Input
                 value={receiverName}
                 onChange={(e) => setReceiverName(e.target.value)}
-                placeholder="Nome de quem recebeu a entrega"
+                placeholder={t('receiver_name')}
                 className="bg-secondary border-0 h-14 text-base"
               />
             </div>
             <div>
               <label className="text-sm text-muted-foreground mb-2 block font-medium">
-                CPF/RG (opcional)
+                {t('receiver_document')} ({t('optional')})
               </label>
               <Input
                 value={receiverDoc}
                 onChange={(e) => setReceiverDoc(e.target.value)}
-                placeholder="Documento do recebedor"
+                placeholder={t('receiver_document')}
                 className="bg-secondary border-0 h-14 text-base"
               />
             </div>
@@ -312,13 +312,13 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
         <div className="glass-card rounded-2xl p-5 space-y-5">
           <h3 className="font-bold text-base flex items-center gap-3">
             <FileText className="w-5 h-5 text-primary" />
-            Observações da Entrega
+            {t('delivery_notes')}
           </h3>
           
           <Textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Adicione observações sobre a entrega, condições do produto, local de entrega, etc."
+            placeholder={t('notes_placeholder')}
             className="bg-secondary border-0 min-h-[120px] resize-none text-base"
           />
         </div>
@@ -327,23 +327,23 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
         <div className="glass-card rounded-2xl p-5">
           <h3 className="font-bold text-base flex items-center gap-3 mb-4">
             <FileText className="w-5 h-5 text-accent" />
-            Resumo da Entrega
+            {t('delivery_summary')}
           </h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2">
-              <span className="text-muted-foreground text-base">Nota Fiscal</span>
+              <span className="text-muted-foreground text-base">{t('invoice')}</span>
               <span className="font-semibold text-base">{delivery.nf}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-t border-border/50">
-              <span className="text-muted-foreground text-base">Cliente</span>
+              <span className="text-muted-foreground text-base">{t('client')}</span>
               <span className="font-semibold text-base">{delivery.client}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-t border-border/50">
-              <span className="text-muted-foreground text-base">Itens</span>
-              <span className="font-semibold text-base">{delivery.items} peças</span>
+              <span className="text-muted-foreground text-base">{t('total_items')}</span>
+              <span className="font-semibold text-base">{delivery.items}</span>
             </div>
             <div className="flex justify-between items-start py-2 border-t border-border/50">
-              <span className="text-muted-foreground text-base">Endereço</span>
+              <span className="text-muted-foreground text-base">{t('address')}</span>
               <span className="font-semibold text-base text-right max-w-[200px]">{delivery.address}</span>
             </div>
           </div>
@@ -360,12 +360,12 @@ export function ReceiptCapture({ delivery, onBack, onComplete }: ReceiptCaptureP
           {isSubmitting ? (
             <>
               <Loader2 className="w-6 h-6 mr-3 animate-spin" />
-              Enviando...
+              {t('loading_camera')}
             </>
           ) : (
             <>
               <Check className="w-6 h-6 mr-3" />
-              Confirmar Entrega
+              {t('save_receipt')}
             </>
           )}
         </Button>

@@ -8,12 +8,12 @@ import {
   Camera,
   AlertTriangle,
   FileText,
-  CheckCircle2,
   XCircle
 } from "lucide-react";
 import { Delivery } from "@/types/delivery";
-import { getStatusLabel, getStatusClass } from "@/data/mockDeliveries";
+import { getStatusClass } from "@/data/mockDeliveries";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DeliveryDetailProps {
   delivery: Delivery;
@@ -28,6 +28,18 @@ export function DeliveryDetail({
   onRegisterReceipt, 
   onRegisterOccurrence 
 }: DeliveryDetailProps) {
+  const { t } = useLanguage();
+
+  const getStatusLabelTranslated = (status: string) => {
+    const statusMap: Record<string, string> = {
+      pending: t('status_pending'),
+      in_transit: t('status_transit'),
+      delivered: t('status_delivered'),
+      issue: t('status_issue'),
+    };
+    return statusMap[status] || status;
+  };
+
   const handleNavigate = () => {
     const address = encodeURIComponent(`${delivery.address}, ${delivery.city}`);
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${address}`, '_blank');
@@ -46,7 +58,7 @@ export function DeliveryDetail({
         <div className="flex items-center gap-4">
           <button 
             onClick={onBack}
-            aria-label="Voltar"
+            aria-label={t('back')}
             className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center active:bg-secondary/80 transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
@@ -56,7 +68,7 @@ export function DeliveryDetail({
             <p className="text-sm text-muted-foreground font-medium">{delivery.client}</p>
           </div>
           <span className={`status-badge ${getStatusClass(delivery.status)}`}>
-            {getStatusLabel(delivery.status)}
+            {getStatusLabelTranslated(delivery.status)}
           </span>
         </div>
       </header>
@@ -65,19 +77,19 @@ export function DeliveryDetail({
       <div className="p-4 pb-48 space-y-4">
         {/* Priority Alert */}
         {delivery.priority === 'high' && (
-          <div className="glass-card rounded-2xl p-5 border-warning/30 bg-warning/10">
+          <div className="glass-card rounded-2xl p-5 border-l-4 border-warning bg-warning/10">
             <div className="flex items-center gap-3 text-warning">
               <AlertTriangle className="w-6 h-6" />
-              <span className="font-semibold text-lg">Entrega Prioritária</span>
+              <span className="font-semibold text-lg">{t('priority')}</span>
             </div>
           </div>
         )}
 
         {/* Address Card */}
-        <div className="glass-card rounded-2xl p-5">
+        <div className="glass-card rounded-2xl p-5 border-l-4 border-primary">
           <div className="flex items-start gap-4 mb-5">
-            <div className="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
-              <MapPin className="w-7 h-7 text-accent" />
+            <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <MapPin className="w-7 h-7 text-primary" />
             </div>
             <div className="flex-1">
               <p className="font-semibold text-base leading-relaxed">{delivery.address}</p>
@@ -88,10 +100,10 @@ export function DeliveryDetail({
           <div className="grid grid-cols-2 gap-4">
             <Button 
               onClick={handleNavigate}
-              className="touch-action-btn bg-accent hover:bg-accent/90 text-accent-foreground text-base"
+              className="touch-action-btn bg-primary hover:bg-primary/90 text-primary-foreground text-base"
             >
               <Navigation className="w-6 h-6 mr-2" />
-              Navegar
+              {t('navigate')}
             </Button>
             <Button 
               onClick={handleCall}
@@ -100,7 +112,7 @@ export function DeliveryDetail({
               disabled={!delivery.phone}
             >
               <Phone className="w-6 h-6 mr-2" />
-              Ligar
+              {t('call')}
             </Button>
           </div>
         </div>
@@ -109,29 +121,29 @@ export function DeliveryDetail({
         <div className="glass-card rounded-2xl p-5 space-y-5">
           <h3 className="font-bold text-base flex items-center gap-3">
             <FileText className="w-5 h-5 text-primary" />
-            Detalhes da Entrega
+            {t('delivery_details')}
           </h3>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-secondary rounded-xl p-4">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Clock className="w-5 h-5" />
-                <span className="text-sm font-medium">Horário</span>
+                <span className="text-sm font-medium">{t('scheduled_time')}</span>
               </div>
               <p className="font-bold text-lg">{delivery.scheduledTime || '--:--'}</p>
             </div>
             <div className="bg-secondary rounded-xl p-4">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
                 <Package className="w-5 h-5" />
-                <span className="text-sm font-medium">Itens</span>
+                <span className="text-sm font-medium">{t('total_items')}</span>
               </div>
-              <p className="font-bold text-lg">{delivery.items} peças</p>
+              <p className="font-bold text-lg">{delivery.items}</p>
             </div>
           </div>
 
           {delivery.notes && (
             <div className="bg-secondary rounded-xl p-4">
-              <p className="text-sm text-muted-foreground mb-2 font-medium">Observações</p>
+              <p className="text-sm text-muted-foreground mb-2 font-medium">{t('delivery_notes')}</p>
               <p className="text-base leading-relaxed">{delivery.notes}</p>
             </div>
           )}
@@ -147,7 +159,7 @@ export function DeliveryDetail({
             disabled={delivery.status === 'delivered'}
           >
             <Camera className="w-6 h-6 mr-3" />
-            Registrar Canhoto
+            {t('register_receipt')}
           </Button>
           <div className="grid grid-cols-2 gap-4">
             <Button 
@@ -156,14 +168,14 @@ export function DeliveryDetail({
               className="touch-action-btn border-warning text-warning hover:bg-warning/10 text-base"
             >
               <AlertTriangle className="w-5 h-5 mr-2" />
-              Ocorrência
+              {t('nav_occurrences')}
             </Button>
             <Button 
               variant="outline"
               className="touch-action-btn border-destructive text-destructive hover:bg-destructive/10 text-base"
             >
               <XCircle className="w-5 h-5 mr-2" />
-              Recusar
+              {t('cancel')}
             </Button>
           </div>
         </div>
