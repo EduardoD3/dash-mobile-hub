@@ -164,18 +164,7 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* Hide Lovable badge - comprehensive */
-  [data-lovable-badge],
-  .lovable-badge,
-  [class*="lovable"],
-  #lovable-badge,
-  div[id*="lovable"],
-  a[href*="lovable.dev"] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
+  
 
   .animate-fade-in {
     animation: fadeIn 0.3s ease-out;
